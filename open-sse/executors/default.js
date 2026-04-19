@@ -165,7 +165,8 @@ export class DefaultExecutor extends BaseExecutor {
       kiro: () => this.refreshKiro(credentials.refreshToken),
       cline: () => this.refreshCline(credentials.refreshToken),
       "kimi-coding": () => this.refreshKimiCoding(credentials.refreshToken),
-      kilocode: () => this.refreshKilocode(credentials.refreshToken)
+      kilocode: () => this.refreshKilocode(credentials.refreshToken),
+      codebuddy: () => this.refreshCodebuddy(credentials.refreshToken),
     };
 
     const refresher = refreshers[this.provider];
@@ -278,6 +279,26 @@ export class DefaultExecutor extends BaseExecutor {
   async refreshKilocode(refreshToken) {
     // Kilocode uses device code flow, no refresh token support
     return null;
+  }
+
+  async refreshCodebuddy(refreshToken) {
+    const response = await fetch("https://www.codebuddy.ai/v2/plugin/auth/token/refresh", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Refresh-Token": refreshToken,
+        "X-Auth-Refresh-Source": "plugin",
+        "User-Agent": "CLI/2.91.0 CodeBuddy/2.91.0",
+      },
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    if (data.code !== 0 || !data.data) return null;
+    return {
+      accessToken: data.data.accessToken,
+      refreshToken: data.data.refreshToken || refreshToken,
+      expiresIn: data.data.expiresIn,
+    };
   }
 }
 
