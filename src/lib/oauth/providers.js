@@ -1087,7 +1087,10 @@ const PROVIDERS = {
       }
       return {
         device_code: data.data.state,
-        verification_uri: data.data.authUrl,
+        // Server may return copilot.tencent.com URL (WeChat login) — replace with codebuddy.ai
+        verification_uri: data.data.authUrl
+          .replace("https://copilot.tencent.com/", "https://www.codebuddy.ai/")
+          .replace("https://staging-copilot.tencent.com/", "https://www.codebuddy.ai/"),
         user_code: "",
         interval: config.pollInterval / 1000,
         _isCodeBuddy: true,
