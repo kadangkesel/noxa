@@ -239,6 +239,52 @@ export async function refreshCodexToken(refreshToken, log) {
 }
 
 /**
+ * Specialized refresh for CodeBuddy (Tencent) tokens
+ * Uses X-Refresh-Token header instead of body parameter
+ */
+export async function refreshCodebuddyToken(refreshToken, log) {
+  const refreshUrl = "https://www.codebuddy.ai/v2/plugin/auth/token/refresh";
+  try {
+    const response = await fetch(refreshUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Refresh-Token": refreshToken,
+        "X-Auth-Refresh-Source": "plugin",
+        "User-Agent": "CLI/2.91.0 CodeBuddy/2.91.0",
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      log?.error?.("TOKEN_REFRESH", "Failed to refresh CodeBuddy token", { status: response.status, error: errorText });
+      return null;
+    }
+
+    const data = await response.json();
+    if (data.code !== 0 || !data.data) {
+      log?.error?.("TOKEN_REFRESH", "CodeBuddy refresh returned error", { code: data.code, msg: data.msg });
+      return null;
+    }
+
+    const tokens = data.data;
+    log?.info?.("TOKEN_REFRESH", "Successfully refreshed CodeBuddy token", {
+      hasNewAccessToken: !!tokens.accessToken,
+      expiresIn: tokens.expiresIn,
+    });
+
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken || refreshToken,
+      expiresIn: tokens.expiresIn,
+    };
+  } catch (error) {
+    log?.error?.("TOKEN_REFRESH", `Network error refreshing CodeBuddy token: ${error.message}`);
+    return null;
+  }
+}
+
+/**
  * Specialized refresh for Kiro (AWS CodeWhisperer) tokens
  * Supports both AWS SSO OIDC (Builder ID/IDC) and Social Auth (Google/GitHub)
  */
@@ -542,6 +588,8 @@ export async function refreshTokenByProvider(provider, credentials, log) {
       return refreshQwenToken(credentials.refreshToken, log);
     case "iflow":
       return refreshIflowToken(credentials.refreshToken, log);
+    case "codebuddy":
+      return refreshCodebuddyToken(credentials.refreshToken, log);
     case "github":
       return refreshGitHubToken(credentials.refreshToken, log);
     case "kiro":

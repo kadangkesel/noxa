@@ -243,11 +243,11 @@ export const GITLAB_CONFIG = {
 // Step 2: Open authUrl in browser
 // Step 3: Poll POST /v2/plugin/auth/token with state until success
 export const CODEBUDDY_CONFIG = {
-  baseUrl: "https://copilot.tencent.com",
-  stateUrl: "https://copilot.tencent.com/v2/plugin/auth/state",
-  tokenUrl: "https://copilot.tencent.com/v2/plugin/auth/token",
-  refreshUrl: "https://copilot.tencent.com/v2/plugin/auth/token/refresh",
-  userAgent: "CLI/2.63.2 CodeBuddy/2.63.2",
+  baseUrl: "https://www.codebuddy.ai",
+  stateUrl: "https://www.codebuddy.ai/v2/plugin/auth/state",
+  tokenUrl: "https://www.codebuddy.ai/v2/plugin/auth/token",
+  refreshUrl: "https://www.codebuddy.ai/v2/plugin/auth/token/refresh",
+  userAgent: "CLI/2.91.0 CodeBuddy/2.91.0",
   platform: "CLI",
   pollInterval: 5000,
 };

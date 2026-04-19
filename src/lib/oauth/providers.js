@@ -1073,7 +1073,7 @@ const PROVIDERS = {
           Accept: "application/json",
           "User-Agent": config.userAgent,
           "X-Requested-With": "XMLHttpRequest",
-          "X-Domain": "copilot.tencent.com",
+          "X-Domain": "www.codebuddy.ai",
           "X-No-Authorization": "true",
           "X-No-User-Id": "true",
           "X-Product": "SaaS",
@@ -1094,30 +1094,37 @@ const PROVIDERS = {
       };
     },
     pollToken: async (config, deviceCode) => {
-      const response = await fetch(config.tokenUrl, {
-        method: "POST",
+      // CodeBuddy uses GET to poll token (token can only be polled once after login)
+      const response = await fetch(`${config.tokenUrl}?state=${deviceCode}`, {
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
           Accept: "application/json",
           "User-Agent": config.userAgent,
-          "X-Requested-With": "XMLHttpRequest",
-          "X-Domain": "copilot.tencent.com",
-          "X-No-Authorization": "true",
-          "X-No-User-Id": "true",
-          "X-Product": "SaaS",
         },
-        body: JSON.stringify({ state: deviceCode }),
       });
       if (!response.ok) return { ok: false, data: { error: "request_failed" } };
       const data = await response.json();
       // code 11217 = pending, code 0 = success
       if (data.code === 0 && data.data?.accessToken) {
+        // Fetch account info to get uid
+        let uid = "";
+        try {
+          const accountResp = await fetch(`${config.baseUrl}/v2/plugin/accounts`, {
+            headers: { Authorization: `Bearer ${data.data.accessToken}` },
+          });
+          if (accountResp.ok) {
+            const accountData = await accountResp.json();
+            uid = accountData.data?.accounts?.[0]?.uid || "";
+          }
+        } catch (e) { /* uid is optional, continue without it */ }
         return {
           ok: true,
           data: {
             access_token: data.data.accessToken,
             refresh_token: data.data.refreshToken || "",
             token_type: data.data.tokenType || "Bearer",
+            _uid: uid,
+            _domain: data.data.domain || "www.codebuddy.ai",
           },
         };
       }
@@ -1127,8 +1134,11 @@ const PROVIDERS = {
     mapTokens: (tokens) => ({
       accessToken: tokens.access_token,
       refreshToken: tokens.refresh_token,
-      expiresIn: 86400,
-      providerSpecificData: {},
+      expiresIn: tokens.expires_in || 86400,
+      providerSpecificData: {
+        uid: tokens._uid || "",
+        domain: tokens._domain || "www.codebuddy.ai",
+      },
     }),
   },
 };

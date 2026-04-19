@@ -104,6 +104,12 @@ export class DefaultExecutor extends BaseExecutor {
           headers["Authorization"] = `Bearer ${credentials.apiKey || credentials.accessToken}`;
         } else if (this.provider === "codebuddy") {
           headers["Authorization"] = `Bearer ${credentials.apiKey || credentials.accessToken}`;
+          // CodeBuddy requires X-User-Id and User-Agent for API access
+          if (credentials.providerSpecificData?.uid) {
+            headers["X-User-Id"] = credentials.providerSpecificData.uid;
+          }
+          headers["X-Domain"] = "www.codebuddy.ai";
+          headers["User-Agent"] = "CLI/2.91.0 CodeBuddy/2.91.0";
         } else if (this.provider === "kilocode") {
           headers["Authorization"] = `Bearer ${credentials.apiKey || credentials.accessToken}`;
           if (credentials.providerSpecificData?.orgId) {

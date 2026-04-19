@@ -165,6 +165,28 @@ export const PROVIDER_MODELS = {
     { id: "kwaipilot/kat-coder-pro", name: "KAT Coder Pro" },
   ],
 
+  cb: [  // CodeBuddy (Tencent)
+    { id: "default-model", name: "CodeBuddy Default" },
+    { id: "default-model-lite", name: "CodeBuddy Lite" },
+    { id: "claude-opus-4.6", name: "Assistant Opus 4.6" },
+    { id: "claude-haiku-4.5", name: "Assistant Haiku 4.5" },
+    { id: "gpt-5.4", name: "GPT-5.4" },
+    { id: "gpt-5.3-codex", name: "GPT-5.3 Codex" },
+    { id: "gpt-5.2", name: "GPT-5.2" },
+    { id: "gpt-5.2-codex", name: "GPT-5.2 Codex" },
+    { id: "gpt-5.1", name: "GPT-5.1" },
+    { id: "gpt-5.1-codex", name: "GPT-5.1 Codex" },
+    { id: "gpt-5.1-codex-max", name: "GPT-5.1 Codex Max" },
+    { id: "gpt-5.1-codex-mini", name: "GPT-5.1 Codex Mini" },
+    { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro" },
+    { id: "gemini-3.0-flash", name: "Gemini 3.0 Flash" },
+    { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash" },
+    { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro" },
+    { id: "gemini-3.1-flash-lite", name: "Gemini 3.1 Flash Lite" },
+    { id: "glm-5.0", name: "GLM-5.0" },
+    { id: "kimi-k2.5", name: "Kimi K2.5" },
+  ],
+
   // API Key Providers (alias = id)
   openai: [
     // Flagship models
@@ -453,6 +475,7 @@ const OAUTH_ALIASES = {
   "kimi-coding": "kmc",
   kilocode: "kc",
   cline: "cl",
+  codebuddy: "cb",
   opencode: "oc",
   vertex: "vertex",
   "vertex-partner": "vertex-partner",

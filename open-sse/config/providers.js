@@ -327,10 +327,20 @@ export const PROVIDERS = {
     baseUrl: "https://gitlab.com/api/v4/chat/completions",
     format: "openai",
   },
-  // CodeBuddy (Tencent) - uses device_code polling auth, no chat completions baseUrl needed
+  // CodeBuddy (Tencent) - browser OAuth + device_code polling auth
+  // API: https://www.codebuddy.ai/v2/chat/completions (OpenAI-compatible, stream-only)
   codebuddy: {
-    baseUrl: "https://copilot.tencent.com/v1/chat/completions",
+    baseUrl: "https://www.codebuddy.ai/v2/chat/completions",
     format: "openai",
+    headers: {
+      "x-requested-with": "XMLHttpRequest",
+      "x-codebuddy-request": "1",
+      "X-Product": "SaaS",
+      "X-IDE-Type": "CLI",
+      "X-IDE-Name": "CLI",
+      "X-IDE-Version": "2.91.0",
+      "X-Agent-Intent": "craft",
+    },
   },
   opencode: {
     baseUrl: "https://opencode.ai",
